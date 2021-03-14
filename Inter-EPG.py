@@ -18,10 +18,9 @@ BD1 = "BD_Client"
 EPG1 = "EPG_Client"
 BD2 = "BD_Server"
 EPG2 = "EPG_Server"
-GW1 = "192.180.0.1/24"
+GW1 = "192.168.0.1/24"
 GW2 = "172.32.0.1/24"
 PRIVATE = "private"
-SUBNETNAME = "test"
 VMDOMAIN = "shared-DVS"
 
 
@@ -71,7 +70,7 @@ def main():
     #Create Client BD
     bridge_domain = cobra.model.fv.BD(tenant, name=BD1)
     attach_vrf = cobra.model.fv.RsCtx(bridge_domain, tnFvCtxName=VRF1)
-    subnet = cobra.model.fv.Subnet(bridge_domain, ip=GW1, scope=PRIVATE, name=SUBNETNAME)
+    subnet = cobra.model.fv.Subnet(bridge_domain, ip=GW1, scope=PRIVATE)
 
     #Create CLient EPG
     endpoint_group = cobra.model.fv.AEPg(app_profile, name=EPG1)
@@ -81,7 +80,7 @@ def main():
     #Create Server BD
     bridge_domain = cobra.model.fv.BD(tenant, name=BD2)
     attach_vrf = cobra.model.fv.RsCtx(bridge_domain, tnFvCtxName=VRF1)
-    subnet = cobra.model.fv.Subnet(bridge_domain, ip=GW2, scope=PRIVATE, name=SUBNETNAME)
+    subnet = cobra.model.fv.Subnet(bridge_domain, ip=GW2, scope=PRIVATE)
 
     #Create Server EPG
     endpoint_group = cobra.model.fv.AEPg(app_profile, name=EPG2)
