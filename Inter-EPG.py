@@ -72,6 +72,7 @@ def main():
     filter = cobra.model.vz.Filter(tenant, name="Server-Traffic")
     entry = cobra.model.vz.Entry(filter, name="HTTPS", etherT="ip", prot="tcp", dFromPort=443, dToPort=443)
     entry = cobra.model.vz.Entry(filter, name="SSH", etherT="ip", prot="tcp", dFromPort=22, dToPort=22)
+    entry = cobra.model.vz.Entry(filter, name="SSH", etherT="ip", prot="icmp")
     contract = cobra.model.vz.BrCP(tenant, name="Inter-EPG")
     subject = cobra.model.vz.Subj(contract, name="Server-Subject")
     associate_filter = cobra.model.vz.RsSubjFiltAtt(subject, tnVzFilterName="Server-Traffic")
