@@ -20,7 +20,7 @@ EPG1 = "EPG_Client"
 BD2 = "BD_Server"
 EPG2 = "EPG_Server"
 GW1 = "192.168.0.1/24"
-GW2 = "172.32.0.1/24"
+GW2 = "172.31.0.1/24"
 PRIVATE = "private"
 VMDOMAIN = "shared-DVS"
 
