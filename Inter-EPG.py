@@ -70,29 +70,31 @@ def main():
 
     #Create Contract and Filter
     filter = cobra.model.vz.Filter(tenant, name="Server-Traffic")
-    entry = cobra.model.vz.Entry(filter, name="HTTPS", etherT="ip", prot="tcp", dFromPort=443, dToPort=443)
+    entry1 = cobra.model.vz.Entry(filter, name="HTTPS", etherT="ip", prot="tcp", dFromPort=443, dToPort=443)
     entry2 = cobra.model.vz.Entry(filter, name="SSH", etherT="ip", prot="tcp", dFromPort=22, dToPort=22)
     contract = cobra.model.vz.BrCP(tenant, name="Inter-EPG")
+    subject = cobra.model.vz.Subj(contract, name="Server-Subject")
+    associate_filter = cobra.model.vz.RsSubjFiltAtt(subject, tnVzFilterName="Server-Traffic")
 
     #Create Client BD
-    bridge_domain = cobra.model.fv.BD(tenant, name=BD1)
-    attach_vrf = cobra.model.fv.RsCtx(bridge_domain, tnFvCtxName=VRF1)
-    subnet = cobra.model.fv.Subnet(bridge_domain, ip=GW1, scope=PRIVATE)
+    bridge_domain1 = cobra.model.fv.BD(tenant, name=BD1)
+    attach_vrf1 = cobra.model.fv.RsCtx(bridge_domain1, tnFvCtxName=VRF1)
+    subnet1 = cobra.model.fv.Subnet(bridge_domain1, ip=GW1, scope=PRIVATE)
 
     #Create CLient EPG
-    endpoint_group = cobra.model.fv.AEPg(app_profile, name=EPG1)
-    attach_bd = cobra.model.fv.RsBd(endpoint_group, tnFvBDName=BD1)
-    attach_domain = cobra.model.fv.RsDomAtt(endpoint_group, tDn="uni/vmmp-VMware/dom-shared-DVS", resImedcy="pre-provision")
+    endpoint_group1 = cobra.model.fv.AEPg(app_profile, name=EPG1)
+    attach_bd1 = cobra.model.fv.RsBd(endpoint_group1, tnFvBDName=BD1)
+    attach_domain1 = cobra.model.fv.RsDomAtt(endpoint_group1, tDn="uni/vmmp-VMware/dom-shared-DVS", resImedcy="pre-provision")
 
     #Create Server BD
-    bridge_domain = cobra.model.fv.BD(tenant, name=BD2)
-    attach_vrf = cobra.model.fv.RsCtx(bridge_domain, tnFvCtxName=VRF1)
-    subnet = cobra.model.fv.Subnet(bridge_domain, ip=GW2, scope=PRIVATE)
+    bridge_domain2 = cobra.model.fv.BD(tenant, name=BD2)
+    attach_vrf2 = cobra.model.fv.RsCtx(bridge_domain2, tnFvCtxName=VRF1)
+    subnet2 = cobra.model.fv.Subnet(bridge_domain2, ip=GW2, scope=PRIVATE)
 
     #Create Server EPG
-    endpoint_group = cobra.model.fv.AEPg(app_profile, name=EPG2)
-    attach_bd = cobra.model.fv.RsBd(endpoint_group, tnFvBDName=BD2)
-    attach_domain = cobra.model.fv.RsDomAtt(endpoint_group, tDn="uni/vmmp-VMware/dom-shared-DVS", resImedcy="pre-provision")
+    endpoint_group2 = cobra.model.fv.AEPg(app_profile, name=EPG2)
+    attach_bd2 = cobra.model.fv.RsBd(endpoint_group2, tnFvBDName=BD2)
+    attach_domain2 = cobra.model.fv.RsDomAtt(endpoint_group2, tDn="uni/vmmp-VMware/dom-shared-DVS", resImedcy="pre-provision")
 
 
     #submit the configuration to the apic and print a success message
