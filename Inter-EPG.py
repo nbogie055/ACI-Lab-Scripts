@@ -6,6 +6,7 @@ import cobra.mit.session
 import cobra.mit.request
 import cobra.model.pol
 import cobra.model.fv
+import cobra.model.vz
 from credentials import *
 
 
@@ -66,6 +67,12 @@ def main():
 
     #Create AP
     app_profile = cobra.model.fv.Ap(tenant, name=AP1)
+
+    #Create Contract and Filter
+    filter = cobra.model.vz.Filter(tenant, name="Server-Traffic")
+    entry = cobra.model.vz.Entry(filter, name="HTTPS", etherT="ip", prot="tcp", dFromPort=443, dToPort=443)
+    entry2 = cobra.model.vz.Entry(filter, name="SSH", etherT="ip", prot="tcp", dFromPort=22, dToPort=22)
+    contract = cobra.model.vz.BrCP(tenant, name="Inter-EPG")
 
     #Create Client BD
     bridge_domain = cobra.model.fv.BD(tenant, name=BD1)
