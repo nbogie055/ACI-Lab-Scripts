@@ -14,3 +14,6 @@
 
 5. Running a script
     python .\scriptname
+
+6. VMs naming scheme
+        ap-scriptname
