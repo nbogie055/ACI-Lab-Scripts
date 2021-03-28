@@ -123,24 +123,24 @@ def main():
     #Create inside Redirect polic
     redir_policy = cobra.model.vns.SvcCont(tenant)
     redir_inside = cobra.model.vns.SvcRedirectPol(redir_policy, name="inside", destType="L3")
-    inside_dest = cobra.model.vns.RedirectDest(redir_inside, ip="10.0.10.2", mac="00:50:56:A8:36:32")
+    inside_dest = cobra.model.vns.RedirectDest(redir_inside, ip="10.0.10.2", mac="00:50:56:a8:92:d6")
 
     #Create outside Redirect policy
     redir_outside = cobra.model.vns.SvcRedirectPol(redir_policy, name="outside", destType="L3")
-    outside_dest = cobra.model.vns.RedirectDest(redir_outside, ip="10.0.10.130", mac="00:50:56:A8:41:EA")
+    outside_dest = cobra.model.vns.RedirectDest(redir_outside, ip="10.0.10.130", mac="00:50:56:a8:a5:61")
 
     #Create L4 device
     l4_device = cobra.model.vns.LDevVip(tenant, name="ASAV", managed="no", devtype="VIRTUAL", svcType="FW")
     attach_domain = cobra.model.vns.RsALDevToDomP(l4_device, tDn="uni/vmmp-VMware/dom-shared-DVS")
-    add_device = cobra.model.vns.CDev(l4_device, name="ASAv-1", vcenterName="shared-vc", vmName="Script-mpod-pbr-ASAV")
+    add_device = cobra.model.vns.CDev(l4_device, name="ASAv-1", vcenterName="shared-vc", vmName="Script-pbr-ASAV")
 
     #Create inside interface
     inside_if = cobra.model.vns.CIf(add_device, name="inside", vnicName="Network adapter 2")
-    inside_path = cobra.model.vns.RsCIfPathAtt(inside_if, tDn="topology/pod-1/protpaths-101-103/pathep-[shared-ucsc-17-VPC]")
+    inside_path = cobra.model.vns.RsCIfPathAtt(inside_if, tDn="topology/pod-1/paths-102/pathep-[eth1/43]")
 
     #Create inside interface
     outside_if = cobra.model.vns.CIf(add_device, name="outside", vnicName="Network adapter 3")
-    outside_path = cobra.model.vns.RsCIfPathAtt(outside_if, tDn="topology/pod-1/protpaths-101-103/pathep-[shared-ucsc-17-VPC]")
+    outside_path = cobra.model.vns.RsCIfPathAtt(outside_if, tDn="topology/pod-1/paths-102/pathep-[eth1/43]")
 
     #Create inside cluster interface
     inside_cluster = cobra.model.vns.LIf(l4_device, name="inside")
