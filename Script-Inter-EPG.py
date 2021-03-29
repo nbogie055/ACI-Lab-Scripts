@@ -12,7 +12,7 @@ from credentials import *
 
 #Variables and user input for tenant description
 NAME = input("Enter your name or ID:\n")
-TENANT = "Script-mpod-inter-EPG"
+TENANT = "Script-Inter-EPG"
 AP1 = "AP-Inter-EPG"
 VRF1 = "VRF-internal"
 BD1 = "BD_Client"

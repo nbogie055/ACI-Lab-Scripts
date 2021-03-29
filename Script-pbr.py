@@ -13,7 +13,7 @@ from credentials import *
 
 #Variables and user input for tenant description
 NAME = input("Enter your name or ID:\n")
-TENANT = "Script-mpod-pbr"
+TENANT = "Script-pbr"
 AP1 = "AP-PBR"
 VRF1 = "VRF-internal"
 #Client
@@ -34,7 +34,6 @@ PRIVATE = "private"
 VMDOMAIN = "shared-DVS"
 
 
-
 def test_tenant(tenant_name, apic_session):
     """
     This function tests if the desired Tenant name is already in use.
@@ -46,7 +45,7 @@ def test_tenant(tenant_name, apic_session):
     # build query for existing tenants
     tenant_query = cobra.mit.request.ClassQuery('fvTenant')
     tenant_query.propFilter = 'eq(fvTenant.name, "{}")'.format(tenant_name)
-
+    
     # test for truthiness
     if apic_session.query(tenant_query):
         print("\nTenant {} is already created on the APIC\n".format(tenant_name))
@@ -144,16 +143,16 @@ def main():
 
     #Create inside cluster interface
     inside_cluster = cobra.model.vns.LIf(l4_device, name="inside")
-    attach_inif = cobra.model.vns.RsCIfAttN(inside_cluster, tDn="uni/tn-Script-mpod-pbr/lDevVip-ASAV/cDev-ASAv-1/cIf-[inside]")
+    attach_inif = cobra.model.vns.RsCIfAttN(inside_cluster, tDn="uni/tn-Script-pbr/lDevVip-ASAV/cDev-ASAv-1/cIf-[inside]")
     
     #Create outside cluster interface
     outside_cluster = cobra.model.vns.LIf(l4_device, name="outside")
-    attach_outif = cobra.model.vns.RsCIfAttN(outside_cluster, tDn="uni/tn-Script-mpod-pbr/lDevVip-ASAV/cDev-ASAv-1/cIf-[outside]")
+    attach_outif = cobra.model.vns.RsCIfAttN(outside_cluster, tDn="uni/tn-Script-pbr/lDevVip-ASAV/cDev-ASAv-1/cIf-[outside]")
 
     #Create Service Graph
     service_graph = cobra.model.vns.AbsGraph(tenant, name="epg-SG")
     service_type = cobra.model.vns.AbsNode(service_graph, name="N1", funcTemplateType="FW_ROUTED", routingMode="Redirect", funcType="GoTo", managed="no")
-    attach_ldev = cobra.model.vns.RsNodeToLDev(service_type, tDn="uni/tn-Script-mpod-pbr/lDevVip-ASAV")
+    attach_ldev = cobra.model.vns.RsNodeToLDev(service_type, tDn="uni/tn-Script-pbr/lDevVip-ASAV")
     #Create Consumer and Provider
     consumer_func = cobra.model.vns.AbsFuncConn(service_type, name="consumer")
     provider_func = cobra.model.vns.AbsFuncConn(service_type, name="provider")
@@ -167,37 +166,37 @@ def main():
     term_con1 = cobra.model.vns.AbsTermConn(term_nodeprov, name="1")
 
     #attach terminal nodes to connectors
-    attach_con1 = cobra.model.vns.RsAbsConnectionConns(connector1, tDn="uni/tn-Script-mpod-pbr/AbsGraph-epg-SG/AbsTermNodeCon-T1/AbsTConn")
-    attach_nodcon = cobra.model.vns.RsAbsConnectionConns(connector1, tDn="uni/tn-Script-mpod-pbr/AbsGraph-epg-SG/AbsNode-N1/AbsFConn-consumer")
-    attach_con2 = cobra.model.vns.RsAbsConnectionConns(connector2, tDn="uni/tn-Script-mpod-pbr/AbsGraph-epg-SG/AbsTermNodeProv-T2/AbsTConn")
-    attach_nodprov = cobra.model.vns.RsAbsConnectionConns(connector2, tDn="uni/tn-Script-mpod-pbr/AbsGraph-epg-SG/AbsNode-N1/AbsFConn-provider")
+    attach_con1 = cobra.model.vns.RsAbsConnectionConns(connector1, tDn="uni/tn-Script-pbr/AbsGraph-epg-SG/AbsTermNodeCon-T1/AbsTConn")
+    attach_nodcon = cobra.model.vns.RsAbsConnectionConns(connector1, tDn="uni/tn-Script-pbr/AbsGraph-epg-SG/AbsNode-N1/AbsFConn-consumer")
+    attach_con2 = cobra.model.vns.RsAbsConnectionConns(connector2, tDn="uni/tn-Script-pbr/AbsGraph-epg-SG/AbsTermNodeProv-T2/AbsTConn")
+    attach_nodprov = cobra.model.vns.RsAbsConnectionConns(connector2, tDn="uni/tn-Script-pbr/AbsGraph-epg-SG/AbsNode-N1/AbsFConn-provider")
 
 
     #Add service graph to contract
-    #attach_ct = cobra.model.vns.RtSubjGraphAtt(service_graph, tDn="uni/tn-Script-mpod-pbr/brc-PBR-CT/subj-Server-Subject")
+    #attach_ct = cobra.model.vns.RtSubjGraphAtt(service_graph, tDn="uni/tn-Script-pbr/brc-PBR-CT/subj-Server-Subject")
     attach_sg = cobra.model.vz.RsSubjGraphAtt(subject, tnVnsAbsGraphName="epg-SG")
 
     #Create device selection policy
     dev_policy = cobra.model.vns.LDevCtx(tenant, ctrctNameOrLbl="PBR-CT", graphNameOrLbl="epg-SG", nodeNameOrLbl="N1")
-    attach_device = cobra.model.vns.RsLDevCtxToLDev(dev_policy, tDn="uni/tn-Script-mpod-pbr/lDevVip-ASAV")
+    attach_device = cobra.model.vns.RsLDevCtxToLDev(dev_policy, tDn="uni/tn-Script-pbr/lDevVip-ASAV")
 
     #Create consumer and provider interface context
     consumer_ctx = cobra.model.vns.LIfCtx(dev_policy, connNameOrLbl="consumer", L3Dest="yes")
-    attach_inside_bd = cobra.model.vns.RsLIfCtxToBD(consumer_ctx, tDn="uni/tn-Script-mpod-pbr/BD-BD_ASA_Inside")
-    attach_inside_if = cobra.model.vns.RsLIfCtxToLIf(consumer_ctx, tDn="uni/tn-Script-mpod-pbr/lDevVip-ASAV/lIf-inside")
-    attach_inside_redir = cobra.model.vns.RsLIfCtxToSvcRedirectPol(consumer_ctx, tDn="uni/tn-Script-mpod-pbr/svcCont/svcRedirectPol-inside")
+    attach_inside_bd = cobra.model.vns.RsLIfCtxToBD(consumer_ctx, tDn="uni/tn-Script-pbr/BD-BD_ASA_Inside")
+    attach_inside_if = cobra.model.vns.RsLIfCtxToLIf(consumer_ctx, tDn="uni/tn-Script-pbr/lDevVip-ASAV/lIf-inside")
+    attach_inside_redir = cobra.model.vns.RsLIfCtxToSvcRedirectPol(consumer_ctx, tDn="uni/tn-Script-pbr/svcCont/svcRedirectPol-inside")
 
     provider_ctx = cobra.model.vns.LIfCtx(dev_policy, connNameOrLbl="provider", L3Dest="yes")
-    attach_outside_bd = cobra.model.vns.RsLIfCtxToBD(provider_ctx, tDn="uni/tn-Script-mpod-pbr/BD-BD_ASA_Outside")
-    attach_outside_if = cobra.model.vns.RsLIfCtxToLIf(provider_ctx, tDn="uni/tn-Script-mpod-pbr/lDevVip-ASAV/lIf-outside")
-    attach_outside_redir = cobra.model.vns.RsLIfCtxToSvcRedirectPol(provider_ctx, tDn="uni/tn-Script-mpod-pbr/svcCont/svcRedirectPol-outside")
+    attach_outside_bd = cobra.model.vns.RsLIfCtxToBD(provider_ctx, tDn="uni/tn-Script-pbr/BD-BD_ASA_Outside")
+    attach_outside_if = cobra.model.vns.RsLIfCtxToLIf(provider_ctx, tDn="uni/tn-Script-pbr/lDevVip-ASAV/lIf-outside")
+    attach_outside_redir = cobra.model.vns.RsLIfCtxToSvcRedirectPol(provider_ctx, tDn="uni/tn-Script-pbr/svcCont/svcRedirectPol-outside")
 
     #submit the configuration to the apic and print a success message
     config_request = cobra.mit.request.ConfigRequest()
     config_request.addMo(tenant)
     session.commit(config_request)
 
-    print("\nNew Tenant, {}, has been created.\n".format(TENANT))
+    print("\nNew Tenant, {}, has been created.\n\nSource:\nVM: Script-pbr-Client\nIP: 192.168.0.10\nNode: Pod2 Leaf 205\n\nDestination:\nVM: Script-pbr-Server\nIP: 172.31.0.10\nNode: Pod1 Leaf 101/103\n\nFirewall:\nVM: Script-pbr-ASAV\nInside IP: 10.0.10.2\nOutside IP: 10.0.10.130\nNode: Pod1 Leaf 102\n".format(TENANT))
     #remove below comment for full tenant json config
     #print("\n{}\n".format(config_request.data))
 
