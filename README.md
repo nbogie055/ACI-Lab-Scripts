@@ -16,6 +16,4 @@
 -Running a script
    python .\scriptname
 
--VMs naming scheme
-   ap-scriptname
 

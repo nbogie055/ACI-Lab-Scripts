@@ -12,7 +12,7 @@ from credentials import *
 
 #Variables and user input for tenant description
 NAME = input("Enter your name or ID:\n")
-TENANT = "Script-Inter-EPG"
+TENANT = "script-inter-epg"
 AP1 = "AP-Inter-EPG"
 VRF1 = "VRF-internal"
 BD1 = "BD_Client"
@@ -86,6 +86,8 @@ def main():
     endpoint_group = cobra.model.fv.AEPg(app_profile, name=EPG1)
     attach_bd = cobra.model.fv.RsBd(endpoint_group, tnFvBDName=BD1)
     attach_domain = cobra.model.fv.RsDomAtt(endpoint_group, tDn=VMDOMAIN, resImedcy="pre-provision")
+    create_lag = cobra.model.fv.AEPgLagPolAtt(attach_domain)
+    attach_lag = cobra.model.fv.RsVmmVSwitchEnhancedLagPol(create_lag, tDn="uni/vmmp-VMware/dom-shared-DVS/vswitchpolcont/enlacplagp-active")
     associate_contract = cobra.model.fv.RsCons(endpoint_group, tnVzBrCPName="Inter-EPG")
 
     #Create Server BD
@@ -105,8 +107,9 @@ def main():
     config_request.addMo(tenant)
     session.commit(config_request)
 
-    print("\nNew Tenant, {}, has been created:\n\n{}\n".format(TENANT, config_request.data))
-
+    print("\nNew Tenant, {}, has been created.\n\nSource:\nVM: Script-Inter-EPG-Client\nIP: 192.168.0.10\nNode: Pod1 Leaf 101/103\n\nDestination:\nVM: Script-Inter-EPG-Server1\nIP: 172.31.0.10\nNode: Pod2 Leaf 205\nVM: Script-Inter-EPG-Server2\nIP: 172.31.0.11\nNode: Pod1 Leaf 102\n".format(TENANT))
+    #remove below comment for full tenant json config
+    #print("\n{}\n".format(config_request.data))
 
 if __name__ == '__main__':
     main()
