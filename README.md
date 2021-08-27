@@ -9,9 +9,11 @@
 
     
 -Install the requirments.txt file
-   pip install \*directory\path*\requirements.txt
+   pip install -r \*directory\path*\requirements.txt
     
 -Fill in the credentials file for your environment
+
+-Update Variable names in the script as needed
 
 -Running a script
    python .\scriptname
